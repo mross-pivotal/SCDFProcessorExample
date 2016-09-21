@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.cloud.stream.app.transform.processor.rabbit.PayloadTransformer;
 import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.integration.annotation.Transformer;
 import org.springframework.messaging.Message;
@@ -39,11 +40,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A Processor app that transforms messages using a SpEL expression.
+ * A Processor app that adds my laptops origin to a json message
  *
- * @author Eric Bottard
- * @author Marius Bogoevici
- * @author Gary Russell
+ * @author Matt Riss
+
  */
 @EnableBinding(Processor.class)
 @EnableConfigurationProperties(TransformProcessorProperties.class)
@@ -55,50 +55,9 @@ public class TransformProcessorConfiguration {
 	@Transformer(inputChannel = Processor.INPUT, outputChannel = Processor.OUTPUT)
 	public String transform(Object payload) {
 
-		System.out.println("!!!!" + payload.getClass());
-		//String d = payload.toString();
-		JSONObject v = new JSONObject();
-		try {
+		PayloadTransformer payloadTransformer = new PayloadTransformer();
 
-			ObjectMapper mapper = new ObjectMapper();
-			String str = (String) payload;
-
-			Map<String, Object> json = new HashMap<String, Object>();
-
-			// convert JSON string to Map
-			json = mapper.readValue(str, new TypeReference<Map<String, String>>() {
-			});
-
-			System.out.println("Map: " + json);
-
-			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-			Date date = Calendar.getInstance().getTime();
-			String sDate = dateFormat.format(date);
-
-			///System.out.println.info("Date = {}", sDate);
-
-			json.put("Date", "Hello gemsss");
-			json.put("Origin", "Matthew Ross Laptop");
-			json.put("lte", "Hello gemsss");
-
-			//			json.put("origin", "Matthew Ross's Laptop");
-
-			String mapAsJson = null;
-
-			mapAsJson = new ObjectMapper().writeValueAsString(json);
-
-			v = new JSONObject(mapAsJson);
-		} catch (JsonGenerationException e) {
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-
-		}
-
-		System.out.println("returning this : " + v);
-		return v.toString();
+		return payloadTransformer.addOriginToPayload(payload,"Matthew Ross Laptop");
 
 	}
 	}

@@ -32,7 +32,6 @@ public class PayloadTransformer {
 
       Map<String, Object> json = new HashMap<String, Object>();
 
-
       json = mapper.readValue(str, new TypeReference<Map<String, String>>() {});
 
       System.out.println("Map: " + json);
