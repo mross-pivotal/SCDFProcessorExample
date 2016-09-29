@@ -16,28 +16,12 @@
 
 package org.springframework.cloud.stream.app.transform.processor;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.app.transform.processor.rabbit.PayloadTransformer;
 import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.integration.annotation.Transformer;
-import org.springframework.messaging.Message;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A Processor app that adds my laptops origin to a json message
@@ -52,12 +36,13 @@ public class TransformProcessorConfiguration {
 	@Autowired
 	private TransformProcessorProperties properties;
 
+	PayloadTransformer payloadTransformer = new PayloadTransformer();
+
 	@Transformer(inputChannel = Processor.INPUT, outputChannel = Processor.OUTPUT)
 	public String transform(Object payload) {
 
-		PayloadTransformer payloadTransformer = new PayloadTransformer();
 
-		return payloadTransformer.addOriginToPayload(payload,"Matthew Ross Laptop");
+		return payloadTransformer.addOriginToPayload(payload);
 
 	}
 	}

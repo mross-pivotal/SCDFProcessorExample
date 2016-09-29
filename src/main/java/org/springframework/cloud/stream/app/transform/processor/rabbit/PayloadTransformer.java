@@ -19,36 +19,46 @@ import java.util.Map;
  */
 public class PayloadTransformer {
 
+  HashMap<String,String> sourceLookup;
   public PayloadTransformer () {
-
+      this.sourceLookup = new HashMap<>();
+      sourceLookup.put("102","Matthew Ross Laptop");
+      sourceLookup.put("105","Rob Mee Laptop");
   }
 
-  public String addOriginToPayload(Object payload, String origin) {
+  public String addOriginToPayload(Object payload) {
     JSONObject v = new JSONObject();
+
+
+    System.out.println(payload);
     try {
 
       ObjectMapper mapper = new ObjectMapper();
       String str = (String) payload;
 
-      Map<String, Object> json = new HashMap<String, Object>();
+      Map<String, String> json = new HashMap<String, String>();
 
       json = mapper.readValue(str, new TypeReference<Map<String, String>>() {});
+      String sourceId = (String) json.get("sourceId");
+      if (sourceLookup.containsKey(sourceId)) {
 
-      System.out.println("Map: " + json);
-      json.put("Origin", origin);
+        String origin = sourceLookup.get(sourceId);
+        System.out.println("Map: " + json.get("name"));
+        json.put("Origin", origin);
+      } else {
+        json.put("Origin", "ORIGIN N/A");
+      }
+
 
       String mapAsJson = null;
       mapAsJson = new ObjectMapper().writeValueAsString(json);
 
       v = new JSONObject(mapAsJson);
-    } catch (JsonGenerationException e) {
-      e.printStackTrace();
-    } catch (JsonMappingException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
-
+    } catch (Exception e) {
+      System.out.println(e);
     }
+
+
 
     System.out.println("returning this : " + v);
     return v.toString();

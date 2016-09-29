@@ -26,8 +26,6 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = TransformProcessorRabbitApplication.class)
 public class TransformProcessorRabbitApplicationTests {
 
 	@Test
@@ -36,11 +34,25 @@ public class TransformProcessorRabbitApplicationTests {
 
 		PayloadTransformer transformer = new PayloadTransformer();
 
-		String expextedOutput = "{\"Origin\":\"Matthew Ross Laptop\",\"name\":\"Special Agent Jack Ryan\",\"id\":\"123\"}";
-		String stringInput = "{\"name\":\"Special Agent Jack Ryan\",\"id\":\"123\"}";
+		String expextedOutput = "{\"sourceId\":\"102\",\"Origin\":\"Matthew Ross Laptop\",\"name\":\"Truck Number 123\",\"id\":\"123\"}";
+		String stringInput = "{\"name\":\"Truck Number 123\",\"id\":\"123\",\"sourceId\":\"102\"}";
 		Object obj = (Object) stringInput;
 
-		String transformedString = transformer.addOriginToPayload(obj,"Matthew Ross Laptop");
+		String transformedString = transformer.addOriginToPayload(obj);
+		assertEquals(expextedOutput,transformedString);
+
+		expextedOutput = "{\"sourceId\":\"105\",\"Origin\":\"Rob Mee Laptop\",\"name\":\"Truck Number 166\",\"id\":\"166\"}";
+		stringInput = "{\"name\":\"Truck Number 166\",\"id\":\"166\",\"sourceId\":\"105\"}";
+		obj = (Object) stringInput;
+
+		transformedString = transformer.addOriginToPayload(obj);
+		assertEquals(expextedOutput,transformedString);
+
+		expextedOutput = "{\"Origin\":\"ORIGIN N/A\",\"name\":\"Truck Number 166\",\"id\":\"166\"}";
+		stringInput = "{\"name\":\"Truck Number 166\",\"id\":\"166\"}";
+		obj = (Object) stringInput;
+
+		transformedString = transformer.addOriginToPayload(obj);
 		assertEquals(expextedOutput,transformedString);
 
 
